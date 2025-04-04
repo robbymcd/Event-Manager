@@ -42,3 +42,7 @@ next-env.d.ts
 
 #history
 /.history
+
+#db
+.env.local
+/src/lib/db.ts
