@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
@@ -6,16 +6,29 @@ import { useForm, useWatch } from "react-hook-form";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "../../components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 
-
 import { Fragment } from "react";
-
-import styles from './page.module.css';
+import styles from "./page.module.css";
 
 interface FormSchema {
   email: string;
@@ -32,62 +45,86 @@ interface FormSchema {
   numStudents?: number;
 }
 
-const formSchema: z.ZodType<FormSchema> = z.object({
-  email: z.string().email().endsWith(".edu", {
-    message: "Email must be a valid school email address",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters long",
-  }),
-  confirmPassword: z.string(),
-  university: z.string().min(1, {
-    message: "Must enter a university",
-  }),
-  userType: z.enum(["student", "admin", "super-admin"], {
-    message: "You must select a user type",
-  }),
-  rso: z.string().optional(),
-  rsoDescription: z.string().max(500, {
-    message: "Description must be less than 500 characters",
-  }).optional(),
-  rsoCategory: z.string().optional(),
-  image: z.any()
-  .optional()
-  .refine(files => !files || files.length === 0 || files[0]?.size <= 5000000, {
-    message: "Image must be less than 5MB",
+const formSchema: z.ZodType<FormSchema> = z
+  .object({
+    email: z.string().email().endsWith(".edu", {
+      message: "Email must be a valid school email address",
+    }),
+    password: z.string().min(8, {
+      message: "Password must be at least 8 characters long",
+    }),
+    confirmPassword: z.string(),
+    university: z.string().min(1, {
+      message: "Must enter a university",
+    }),
+    userType: z.enum(["student", "admin", "super-admin"], {
+      message: "You must select a user type",
+    }),
+    rso: z.string().optional(),
+    rsoDescription: z
+      .string()
+      .max(500, {
+        message: "Description must be less than 500 characters",
+      })
+      .optional(),
+    rsoCategory: z.string().optional(),
+    image: z
+      .any()
+      .optional()
+      .refine(
+        (files) => !files || files.length === 0 || files[0]?.size <= 5000000,
+        {
+          message: "Image must be less than 5MB",
+        }
+      )
+      .refine(
+        (files) => {
+          if (!files || files.length === 0) {
+            return true;
+          }
+          const file = files[0];
+          const validTypes = ["image/jpeg", "image/png", "image/jpg"];
+          return validTypes.includes(file.type);
+        },
+        {
+          message: "File must be a valid image type",
+        }
+      ),
+    location: z
+      .string()
+      .min(1, {
+        message: "Must enter a location",
+      })
+      .optional(),
+    uniDescription: z
+      .string()
+      .min(1, {
+        message: "Must enter a university description",
+      })
+      .optional(),
+    numStudents: z
+      .number()
+      .min(1, {
+        message: "Must enter the correct number of students",
+      })
+      .optional(),
   })
-  .refine(files => {
-    if (!files || files.length === 0) {
-      return true;
-    }
-    const file = files[0];
-    const validTypes = ["image/jpeg", "image/png", "image/jpg"];
-    return validTypes.includes(file.type);
-  }, {
-    message: "File must be a valid image type",
-  }),
-  location: z.string().min(1, {
-    message: "Must enter a location",
-  }).optional(),
-  uniDescription: z.string().min(1, {
-    message: "Must enter a university description",
-  }).optional(),
-  numStudents: z.number().min(1, {
-    message: "Must enter the correct number of students",
-  }).optional(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords must match",
-  path: ["confirmPassword"], 
-}).refine((data) => data.userType !== "admin" || !!data.rso, {
-  message: "You must enter an RSO",
-  path: ["rso"],
-}).refine((data) => data.userType !== "admin" || !!data.rsoDescription, {
-  message: "You must enter an RSO description",
-  path: ["rsoDescription"],
-}).refine((data) => data.userType !== "admin" || !!data.rsoCategory, {
-  message: "You must enter an RSO category",
-  path: ["rsoCategory"],
-});
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords must match",
+    path: ["confirmPassword"],
+  })
+  .refine((data) => data.userType !== "admin" || !!data.rso, {
+    message: "You must enter an RSO",
+    path: ["rso"],
+  })
+  .refine((data) => data.userType !== "admin" || !!data.rsoDescription, {
+    message: "You must enter an RSO description",
+    path: ["rsoDescription"],
+  })
+  .refine((data) => data.userType !== "admin" || !!data.rsoCategory, {
+    message: "You must enter an RSO category",
+    path: ["rsoCategory"],
+  });
 
 export default function SignupPage() {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -115,7 +152,7 @@ export default function SignupPage() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    console.log(values);
     toast.success("Signup successful");
     form.reset();
   }
@@ -128,7 +165,10 @@ export default function SignupPage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className={styles.form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className={styles.form}
+            >
               <FormField
                 control={form.control}
                 name="email"
@@ -136,7 +176,12 @@ export default function SignupPage() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input className={styles.input} type="text" placeholder="Enter your email here" {...field} />
+                      <Input
+                        className={styles.input}
+                        type="text"
+                        placeholder="Enter your email here"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -149,7 +194,12 @@ export default function SignupPage() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input className={styles.input} type="password" placeholder="Enter your password here" {...field} />
+                      <Input
+                        className={styles.input}
+                        type="password"
+                        placeholder="Enter your password here"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -162,7 +212,12 @@ export default function SignupPage() {
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
-                      <Input className={styles.input} type="password" placeholder="Enter your password again" {...field} />
+                      <Input
+                        className={styles.input}
+                        type="password"
+                        placeholder="Enter your password again"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -175,7 +230,12 @@ export default function SignupPage() {
                   <FormItem>
                     <FormLabel>University</FormLabel>
                     <FormControl>
-                      <Input className={styles.input} type="text" placeholder="Enter your university" {...field} />
+                      <Input
+                        className={styles.input}
+                        type="text"
+                        placeholder="Enter your university"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -225,7 +285,12 @@ export default function SignupPage() {
                       <FormItem>
                         <FormLabel>RSO</FormLabel>
                         <FormControl>
-                          <Input className={styles.input} type="text" placeholder="Enter your RSO" {...field} />
+                          <Input
+                            className={styles.input}
+                            type="text"
+                            placeholder="Enter your RSO"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -238,7 +303,12 @@ export default function SignupPage() {
                       <FormItem>
                         <FormLabel>RSO Description</FormLabel>
                         <FormControl>
-                          <Textarea className={styles.textArea} maxLength={500} placeholder="Enter a description of your RSO " {...field} />
+                          <Textarea
+                            className={styles.textArea}
+                            maxLength={500}
+                            placeholder="Enter a description of your RSO "
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -251,7 +321,12 @@ export default function SignupPage() {
                       <FormItem>
                         <FormLabel>RSO Category</FormLabel>
                         <FormControl>
-                          <Input className={styles.input} type="text" placeholder="Enter a category for your RSO " {...field} />
+                          <Input
+                            className={styles.input}
+                            type="text"
+                            placeholder="Enter a category for your RSO "
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -260,11 +335,11 @@ export default function SignupPage() {
                   <FormField
                     control={form.control}
                     name="image"
-                    render={({field: {value, onChange, ...fieldProps }}) => (
+                    render={({ field: { value, onChange, ...fieldProps } }) => (
                       <FormItem>
                         <FormLabel>Upload Image</FormLabel>
                         <FormControl>
-                          <Input 
+                          <Input
                             type="file"
                             className={styles.imgInput}
                             onChange={(e) => {
@@ -280,7 +355,6 @@ export default function SignupPage() {
                       </FormItem>
                     )}
                   />
-                  
                 </Fragment>
               )}
               {userType == "super-admin" && (
@@ -292,7 +366,12 @@ export default function SignupPage() {
                       <FormItem>
                         <FormLabel>University Location</FormLabel>
                         <FormControl>
-                          <Input className={styles.input} type="text" placeholder="Enter your university location" {...field} />
+                          <Input
+                            className={styles.input}
+                            type="text"
+                            placeholder="Enter your university location"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -305,7 +384,12 @@ export default function SignupPage() {
                       <FormItem>
                         <FormLabel>University Location</FormLabel>
                         <FormControl>
-                          <Input className={styles.input} type="text" placeholder="Enter your university location" {...field} />
+                          <Input
+                            className={styles.input}
+                            type="text"
+                            placeholder="Enter your university location"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -318,15 +402,19 @@ export default function SignupPage() {
                       <FormItem>
                         <FormLabel>Number of Students</FormLabel>
                         <FormControl>
-                          <Input 
-                            className={styles.input} 
-                            type="number" 
+                          <Input
+                            className={styles.input}
+                            type="number"
                             placeholder="Number of students"
                             onChange={(e) => {
-                              field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10));
+                              field.onChange(
+                                e.target.value === ""
+                                  ? undefined
+                                  : parseInt(e.target.value, 10)
+                              );
                             }}
                             onBlur={field.onBlur}
-                            value={field.value === undefined ? '' : field.value}
+                            value={field.value === undefined ? "" : field.value}
                             name={field.name}
                             ref={field.ref}
                           />
@@ -338,11 +426,11 @@ export default function SignupPage() {
                   <FormField
                     control={form.control}
                     name="image"
-                    render={({field: {value, onChange, ...fieldProps }}) => (
+                    render={({ field: { value, onChange, ...fieldProps } }) => (
                       <FormItem>
                         <FormLabel>Upload Image</FormLabel>
                         <FormControl>
-                          <Input 
+                          <Input
                             type="file"
                             className={styles.imgInput}
                             onChange={(e) => {
@@ -360,7 +448,9 @@ export default function SignupPage() {
                   />
                 </Fragment>
               )}
-              <Button className={styles.button} type="submit">Submit</Button>
+              <Button className={styles.button} type="submit">
+                Submit
+              </Button>
             </form>
           </Form>
           <div className={styles.footer}>
