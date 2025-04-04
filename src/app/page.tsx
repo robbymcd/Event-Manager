@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -6,18 +6,33 @@ import { useForm } from "react-hook-form";
 import { Toaster } from "../components/ui/sonner";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "../components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../components/ui/form";
 import { Input } from "../components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import styles from "./page.module.css";
 
 const formSchema = z.object({
   email: z.string().email().endsWith(".edu", {
-    message: "Email must be a valid school email address"
+    message: "Email must be a valid school email address",
   }),
   password: z.string().min(8, {
-    message: "Password must be at least 8 characters long"
+    message: "Password must be at least 8 characters long",
   }),
 });
 
@@ -32,10 +47,10 @@ export default function Home() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    console.log(values);
     toast.success("Login successful");
     form.reset();
-    // 
+    //
   }
 
   return (
@@ -46,7 +61,10 @@ export default function Home() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className={styles.form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className={styles.form}
+            >
               <FormField
                 control={form.control}
                 name="email"
@@ -54,7 +72,11 @@ export default function Home() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input className={styles.input} placeholder="Enter your email here" {...field} />
+                      <Input
+                        className={styles.input}
+                        placeholder="Enter your email here"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -67,13 +89,20 @@ export default function Home() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input className={styles.input} type="password" placeholder="Enter your password here" {...field} />
+                      <Input
+                        className={styles.input}
+                        type="password"
+                        placeholder="Enter your password here"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button className={styles.button} type="submit">Submit</Button>
+              <Button className={styles.button} type="submit">
+                Submit
+              </Button>
             </form>
           </Form>
           <div className={styles.footer}>
