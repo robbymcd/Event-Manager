@@ -1,3 +1,4 @@
+"use client"
 import { createContext, useState, useContext, ReactNode, FC } from 'react';
 
 // Define the shape of the user data

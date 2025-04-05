@@ -1,4 +1,4 @@
-export default function allEvents() {
+export default function Dashboard() {
     return (
         <div>
             

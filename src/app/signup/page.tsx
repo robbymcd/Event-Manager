@@ -158,7 +158,6 @@ export default function SignupPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Form submitted with values:", values);
     try {
       const response = await fetch(`http://localhost:3000/api/auth/register`, {
         method: "POST",
@@ -166,7 +165,7 @@ export default function SignupPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: values.email,
+          email: values.email,
           password: values.password,
           role: values.userType,
           university: values.university,
@@ -174,12 +173,10 @@ export default function SignupPage() {
           uniLoc: values.location,
           uniStudents: values.numStudents,
           rso: values.rso,
-          rsoUniversity: values.university,
           rsoDesc: values.rsoDescription,
           rsoCat: values.rsoCategory,
         }),
       });
-
       if (response.ok) {
         const data = await response.json();
         toast.success("Signup successful");
@@ -187,11 +184,11 @@ export default function SignupPage() {
         form.reset();
         // update user context
         login({
-          id: data.user.id,
-          email: data.user.email,
-          role: data.user.role,
-          university: data.user.university,
-          rso: data.user.rso,
+          id: data.id,
+          email: data.email,
+          role: data.role,
+          university: data.university,
+          rso: data.rso,
         });
         router.push(`/dashboard`);
       } else {
@@ -300,6 +297,7 @@ export default function SignupPage() {
                       <RadioGroup
                         onValueChange={field.onChange}
                         defaultValue={field.value}
+                        value={field.value}
                       >
                         <FormItem className={styles.radioItem}>
                           <FormControl>
@@ -508,7 +506,6 @@ export default function SignupPage() {
           </div>
         </CardContent>
       </Card>
-      <Toaster />
     </div>
   );
 }

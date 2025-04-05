@@ -40,7 +40,7 @@ CREATE TABLE ratings (
     FOREIGN KEY (event_id) REFERENCES events(id)
 );
 
-CREATE TABLE rsos (
+CREATE TABLE rso (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     university VARCHAR(255),

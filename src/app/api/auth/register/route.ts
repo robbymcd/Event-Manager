@@ -4,11 +4,11 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
   try {  
-    const { email, password, role, university, uniDesc, uniLoc, uniStudents, rso, rsoUniversity, rsoDesc, rsoCat} = await req.json();
+    const { email, password, role, university, uniDesc, uniLoc, uniStudents, rso, rsoDesc, rsoCat} = await req.json();
   
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    let userId, rsoId, uniId;
+    let userId, rsoId, uniId, res;
 
     // fetch university id by name if it exists
     const existingUni = await pool.query(
@@ -21,53 +21,63 @@ export async function POST(req: NextRequest) {
     }
 
     if (role == "student") {
-      const res = await pool.query(
+
+      // Check if the university exists
+      if (!uniId) {
+        throw new Error("University not found. Admin must belong to a valid university.");
+      }
+
+      res = await pool.query(
         "INSERT INTO users (email, password, university, role) VALUES ($1, $2, $3, $4) RETURNING *",
-        [email, hashedPassword, university, role]
+        [email, hashedPassword, uniId, role]
       );
-      userId = res.rows[0].id;
 
     } else if (role == "admin") {
       
+      // Check if the university exists
+      if (!uniId) {
+        throw new Error("University not found. Admin must belong to a valid university.");
+      }
+
       // create the Rso
       const rsoRes = await pool.query(
         "INSERT INTO rso (name, university, description, category) VALUES ($1, $2, $3, $4) RETURNING id",
-        [rso, rsoUniversity, rsoDesc, rsoCat]
+        [rso, uniId, rsoDesc, rsoCat]
       );
 
       rsoId = rsoRes.rows[0].id;
 
-      const res = await pool.query(
-        "INSERT INTO users (email, password, university, role, rso, rsoDesc, rsoCat) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
-        [email, hashedPassword, role, university, rsoId]
+      res = await pool.query(
+        "INSERT INTO users (email, password, role, university, rso) VALUES ($1, $2, $3, $4, ARRAY[$5]) RETURNING *",
+        [email, hashedPassword, role, uniId, rsoId]
       )
-    
-    } else if (role == "super-admin") {
+    } else { // role == 'super-admin'
       
       // create the University
       const uniRes = await pool.query(
-        "INSERT INTO university (name, location, description, students) VALUES ($1, $2, $3, $4) RETURNING id",
+        "INSERT INTO university (name, location, description, numstudent) VALUES ($1, $2, $3, $4) RETURNING id",
         [university, uniLoc, uniDesc, uniStudents]
       )
 
       uniId = uniRes.rows[0].id;
   
-      const res = await pool.query(
-        "INSERT INTO users (email, password, role, university, rso) VALUES ($1, $2, $3) RETURNING *",
-        [email, hashedPassword, role, uniId, rso]
+      res = await pool.query(
+        "INSERT INTO users (email, password, role, university) VALUES ($1, $2, $3, $4) RETURNING *",
+        [email, hashedPassword, role, uniId]
       );
     }
+    userId = res.rows[0].id;
     return NextResponse.json({
       id: userId,
       email, 
       role,
       university: uniId,
-      rso: rsoId
+      rso: rsoId || null,
     });
   } catch (error) {
     console.log("Error during registration:", error);
     return NextResponse.json(
-      { error: "Registration failed. Please try again." },
+      { error: error instanceof Error ? error.message : "Registration failed. Please try again." },
       { status: 500 }
     )
   }

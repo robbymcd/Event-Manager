@@ -3,6 +3,7 @@ import { K2D } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import { UserProvider } from "./context/userContext";
+import { Toaster } from "sonner";
 
 const k2d = K2D({
   variable: "--font-k2d",
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body className={k2d.variable}>
         <UserProvider>
           {children}
+          <Toaster theme="dark" position="bottom-right" />
         </UserProvider>
       </body>
     </html>

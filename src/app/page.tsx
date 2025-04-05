@@ -69,10 +69,10 @@ export default function Home() {
         // update user context
         login({
           id: data.user.id,
-          email: data.user.email,
-          role: data.user.role,
-          university: data.user.university,
-          rso: data.user.rso,
+          email: data.email,
+          role: data.role,
+          university: data.university,
+          rso: data.rso,
         });
         router.push(`/dashboard`);
       } else {
@@ -144,7 +144,6 @@ export default function Home() {
           </div>
         </CardContent>
       </Card>
-      <Toaster />
     </div>
   );
 }
