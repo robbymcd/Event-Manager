@@ -22,6 +22,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { useUser } from "./context/userContext";
 
 import styles from "./page.module.css";
 
@@ -36,6 +37,7 @@ const formSchema = z.object({
 
 export default function Home() {
   const router = useRouter();
+  const { login } = useUser();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -64,6 +66,14 @@ export default function Home() {
         toast.success("Login successful");
         console.log("Login successful:", data);
         form.reset();
+        // update user context
+        login({
+          id: data.user.id,
+          email: data.user.email,
+          role: data.user.role,
+          university: data.user.university,
+          rso: data.user.rso,
+        });
         router.push(`/dashboard`);
       } else {
         const error = await response.json();

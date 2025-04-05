@@ -28,6 +28,7 @@ import { Fragment } from "react";
 import { useRouter } from "next/navigation";
 
 import LocationInput from "@/components/locationInput/locationInput";
+import { useUser } from "../context/userContext";
 
 import styles from "./page.module.css";
 
@@ -129,7 +130,7 @@ const formSchema: z.ZodType<FormSchema> = z
   );
 
 export default function SignupPage() {
-
+  const { login } = useUser();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -184,6 +185,14 @@ export default function SignupPage() {
         toast.success("Signup successful");
         console.log("Signup successful:", data);
         form.reset();
+        // update user context
+        login({
+          id: data.user.id,
+          email: data.user.email,
+          role: data.user.role,
+          university: data.user.university,
+          rso: data.user.rso,
+        });
         router.push(`/dashboard`);
       } else {
         const error = await response.json();

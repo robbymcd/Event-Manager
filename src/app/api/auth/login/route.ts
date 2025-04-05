@@ -19,10 +19,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid password" }, { status: 400 });
   }
 
-  const { id, role, university } = user.rows[0];
+  const { id, role, university, rso } = user.rows[0];
 
   return NextResponse.json({ 
     message: "Login successful",
-    user: { id, email, role, university},
+    user: { id, email, role, university, rso},
   });
 }
