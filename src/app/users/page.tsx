@@ -44,7 +44,11 @@ export default function TestPage() {
       setUsers((prevUsers) => [...prevUsers, data]); // Add the new user to the list
       setNewUser({ username: "", password: "", role: "" }); // Reset the form fields
     } catch (err) {
-      setError(err.message); // Set error message if adding the user fails
+      if (err instanceof Error) {
+        setError(err.message); // Set error message if adding the user fails
+      } else {
+        setError("An unknown error occurred"); // Handle unknown error types
+      }
     }
   };
 

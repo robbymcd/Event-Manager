@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,8 +18,6 @@ import { Input } from "../../components/ui/input";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -28,6 +25,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 
 import { Fragment } from "react";
+import { useRouter } from "next/navigation";
+
+import LocationInput from "@/components/locationInput/locationInput";
+
 import styles from "./page.module.css";
 
 interface FormSchema {
@@ -90,24 +91,9 @@ const formSchema: z.ZodType<FormSchema> = z
           message: "File must be a valid image type",
         }
       ),
-    location: z
-      .string()
-      .min(1, {
-        message: "Must enter a location",
-      })
-      .optional(),
-    uniDescription: z
-      .string()
-      .min(1, {
-        message: "Must enter a university description",
-      })
-      .optional(),
-    numStudents: z
-      .number()
-      .min(1, {
-        message: "Must enter the correct number of students",
-      })
-      .optional(),
+    location: z.string().optional(),
+    uniDescription: z.string().optional(),
+    numStudents: z.number().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords must match",
@@ -124,9 +110,28 @@ const formSchema: z.ZodType<FormSchema> = z
   .refine((data) => data.userType !== "admin" || !!data.rsoCategory, {
     message: "You must enter an RSO category",
     path: ["rsoCategory"],
-  });
+  })
+  .refine((data) => data.userType !== "super-admin" || (!!data.location && data.location.length > 0), {
+    message: "University location is required",
+    path: ["location"],
+  })
+  .refine(
+    (data) => data.userType !== "super-admin" || (!!data.uniDescription && data.uniDescription.length > 0), {
+      message: "University description is required for super admins",
+      path: ["uniDescription"],
+    }
+  )
+  .refine(
+    (data) => data.userType !== "super-admin" || (!!data.numStudents && data.numStudents > 0), {
+      message: "Number of students is required for super admins",
+      path: ["numStudents"],
+    }
+  );
 
 export default function SignupPage() {
+
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -151,10 +156,45 @@ export default function SignupPage() {
     name: "userType",
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    toast.success("Signup successful");
-    form.reset();
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("Form submitted with values:", values);
+    try {
+      const response = await fetch(`http://localhost:3000/api/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: values.email,
+          password: values.password,
+          role: values.userType,
+          university: values.university,
+          uniDesc: values.uniDescription,
+          uniLoc: values.location,
+          uniStudents: values.numStudents,
+          rso: values.rso,
+          rsoUniversity: values.university,
+          rsoDesc: values.rsoDescription,
+          rsoCat: values.rsoCategory,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast.success("Signup successful");
+        console.log("Signup successful:", data);
+        form.reset();
+        router.push(`/dashboard`);
+      } else {
+        const error = await response.json();
+        toast.error(error.message || "Signup failed");
+        console.error("Signup failed:", error);
+      }
+
+    } catch (error) {
+      toast.error("An error occurred during signup");
+      console.error("Signup error:", error);
+    }
   }
 
   return (
@@ -366,11 +406,11 @@ export default function SignupPage() {
                       <FormItem>
                         <FormLabel>University Location</FormLabel>
                         <FormControl>
-                          <Input
+                          <LocationInput
                             className={styles.input}
-                            type="text"
-                            placeholder="Enter your university location"
-                            {...field}
+                            placeholder="Enter the university location"
+                            value={field.value}
+                            onChange={field.onChange}
                           />
                         </FormControl>
                         <FormMessage />
@@ -382,12 +422,12 @@ export default function SignupPage() {
                     name="uniDescription"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>University Location</FormLabel>
+                        <FormLabel>University Description</FormLabel>
                         <FormControl>
-                          <Input
-                            className={styles.input}
-                            type="text"
-                            placeholder="Enter your university location"
+                          <Textarea
+                            className={styles.textArea}
+                            maxLength={500}
+                            placeholder="Enter your university description"
                             {...field}
                           />
                         </FormControl>
