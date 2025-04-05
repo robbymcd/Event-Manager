@@ -9,7 +9,6 @@ import { Button } from "../components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,11 +18,10 @@ import { Input } from "../components/ui/input";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 
 import styles from "./page.module.css";
 
@@ -37,6 +35,8 @@ const formSchema = z.object({
 });
 
 export default function Home() {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,11 +46,34 @@ export default function Home() {
     mode: "onBlur",
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    toast.success("Login successful");
-    form.reset();
-    //
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const response = await fetch(`http://localhost:3000/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password,
+        }),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        toast.success("Login successful");
+        console.log("Login successful:", data);
+        form.reset();
+        router.push(`/dashboard`);
+      } else {
+        const error = await response.json();
+        toast.error(error.message || "Login failed");
+        console.error("Login failed:", error);
+      }
+    } catch (error) {
+      toast.error("An error occurred during login");
+      console.error("Login error:", error);
+    }
   }
 
   return (
