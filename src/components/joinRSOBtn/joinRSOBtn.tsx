@@ -106,8 +106,8 @@ export default function JoinRSOBtn() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await fetch(
-        formType === "create" ? "http://localhost:3000/api/rsos/create" : "http://localhost:3000/api/rsos/join",)
+      //const response = await fetch(
+      //  formType === "create" ? "http://localhost:3000/api/rsos/create" : "http://localhost:3000/api/rsos/join",)
       console.log("Submitting form with values:", values);
     } catch (error) {
       console.log("Error submitting form:", error);

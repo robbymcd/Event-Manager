@@ -33,7 +33,7 @@ CREATE TABLE events (
     location VARCHAR(255),
     contact_phone VARCHAR(20),
     contact_email VARCHAR(255),
-    participants TEXT[]
+    participants TEXT[],
     rso INT NOT NULL,
     university INT NOT NULL,
     FOREIGN KEY (rso) REFERENCES rso(id),
