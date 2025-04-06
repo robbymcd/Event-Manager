@@ -1,3 +1,4 @@
+import React, { Fragment } from "react";
 import pfpIcon from "../../../public/pfp.png"
 import { useUser } from "@/app/context/userContext";
 import Image from "next/image";
@@ -25,7 +26,10 @@ export default function Navbar() {
             )}
 
             { user?.role === "admin" && (
-                <CreateEventBtn />
+                <div className="flex gap-4">
+                    <JoinRSOBtn />
+                    <CreateEventBtn />
+                </div>
             )}
 
             { user?.role === "super-admin" && (

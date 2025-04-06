@@ -1,0 +1,42 @@
+.button {
+    padding: 20px;
+}
+
+.dialogContent {
+    padding: 20px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.radioGroup {
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.radioItem {
+    display: flex;
+    flex-direction: row;
+}
+
+.rsoOption {
+    margin-bottom: 10px;
+}
+
+.input {
+    padding: 10px;
+}
+
+.textArea {
+    padding: 10px;
+    max-height: 360px;
+    overflow-y: none;
+}
+
+.submitButton {
+    padding: 10px 20px;
+}

@@ -33,7 +33,7 @@ import styles from './createEventBtn.module.css'
 interface FormSchema {
     name: string;
     description: string;
-    category: string;
+    category: "public" | "private" | "rso";
     date: string;
     event_time: string;
     location: string;
@@ -77,6 +77,16 @@ export default function CreateEventBtn() {
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        const dateStr = values.date;
+        const timeStr = values.event_time; 
+        const [year, month, day] = dateStr.split('-').map(Number);
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        const eventDateTime = new Date(year, month - 1, day, hours, minutes);
+        const formattedTimestamp = eventDateTime.toISOString();
+        const eventData = {
+            ...values,
+            timestamp: formattedTimestamp,
+        }
         try {
             console.log("Submitting event data:", values);
         } catch (error) {
@@ -102,7 +112,7 @@ export default function CreateEventBtn() {
                                 <FormItem>
                                     <FormLabel>Event Name</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Enter event name" {...field} />
+                                        <Input className={styles.input} placeholder="Enter event name" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -116,7 +126,7 @@ export default function CreateEventBtn() {
                                 <FormItem>
                                     <FormLabel>Event Description</FormLabel>
                                     <FormControl>
-                                        <Textarea placeholder="Enter event description" {...field} />
+                                        <Textarea className={styles.textArea} placeholder="Enter event description" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -130,7 +140,7 @@ export default function CreateEventBtn() {
                                 <FormItem>
                                     <FormLabel>Event Category</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Enter event category" {...field} />
+                                        <Input className={styles.input} placeholder="Enter event category" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -144,7 +154,7 @@ export default function CreateEventBtn() {
                                 <FormItem>
                                     <FormLabel>Event Date</FormLabel>
                                     <FormControl>
-                                        <Input type="date" {...field} />
+                                        <Input className={styles.input} type="date" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -158,7 +168,7 @@ export default function CreateEventBtn() {
                                 <FormItem>
                                     <FormLabel>Event Time</FormLabel>
                                     <FormControl>
-                                        <Input type="time" {...field} />
+                                        <Input className={styles.input} type="time" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -172,7 +182,7 @@ export default function CreateEventBtn() {
                                 <FormItem>
                                     <FormLabel>Event Location</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Enter event location" {...field} />
+                                        <Input className={styles.input} placeholder="Enter event location" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -184,13 +194,29 @@ export default function CreateEventBtn() {
                             name="contact_phone"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Contact Phone (optional)</FormLabel>
+                                    <FormLabel>Contact Phone</FormLabel>
                                     <FormControl>
-                                        <Input type="tel" placeholder="Enter contact phone number" {...field} />
+                                        <Input className={styles.input} type="tel" placeholder="Enter contact phone number" {...field} />
                                     </FormControl>
                                 </FormItem>
                             )}
                         />
+                        <FormField
+                            control={form.control}
+                            name="contact_email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Contact Email</FormLabel>
+                                    <FormControl>
+                                        <Input className={styles.input} type="email" placeholder="Enter contact email address" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <Button type="submit" className={styles.submitButton} disabled={!form.formState.isValid}>
+                            Create Event
+                        </Button>
                     </form>
                 </Form>
             </DialogContent>
