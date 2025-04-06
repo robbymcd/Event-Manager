@@ -3,7 +3,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { Toaster } from "../components/ui/sonner";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import {
@@ -69,10 +68,10 @@ export default function Home() {
         // update user context
         login({
           id: data.user.id,
-          email: data.email,
-          role: data.role,
-          university: data.university,
-          rso: data.rso,
+          email: data.user.email,
+          role: data.user.role,
+          university: data.user.university,
+          rso: data.user.rso,
         });
         router.push(`/dashboard`);
       } else {

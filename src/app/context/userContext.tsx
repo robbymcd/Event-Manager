@@ -1,5 +1,5 @@
 "use client"
-import { createContext, useState, useContext, ReactNode, FC } from 'react';
+import { createContext, useState, useContext, ReactNode, FC, useEffect } from 'react';
 
 // Define the shape of the user data
 interface UserData {
@@ -30,13 +30,32 @@ interface UserProviderProps {
 // Provider component
 export const UserProvider: FC<UserProviderProps> = ({ children }) => {
   const [user, setUser] = useState<UserData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load user data from localStorage when the component mounts
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error('Failed to parse stored user data:', error);
+        localStorage.removeItem('user');
+      }
+    }
+    setIsLoading(false);
+  }, []);
 
   const login = (userData: UserData) => {
+    // Save to state and localStorage
     setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = () => {
+    // Clear from state and localStorage
     setUser(null);
+    localStorage.removeItem('user');
   };
 
   const value = {
@@ -46,6 +65,11 @@ export const UserProvider: FC<UserProviderProps> = ({ children }) => {
     login,
     logout
   };
+
+  // Optionally show a loading state while checking for stored user
+  if (isLoading) {
+    return null; // Or return a loading spinner
+  }
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
