@@ -13,8 +13,15 @@ CREATE TABLE users (
     role VARCHAR(50) NOT NULL,
     university INT,
     rso TEXT[],
-
     FOREIGN KEY (university) REFERENCES university(id)
+);
+
+CREATE TABLE rso (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    university VARCHAR(255),
+    description TEXT,
+    category VARCHAR(100)
 );
 
 CREATE TABLE events (
@@ -27,6 +34,10 @@ CREATE TABLE events (
     contact_phone VARCHAR(20),
     contact_email VARCHAR(255),
     participants TEXT[]
+    rso INT NOT NULL,
+    university INT NOT NULL,
+    FOREIGN KEY (rso) REFERENCES rso(id),
+    FOREIGN KEY (university) REFERENCES university(id)
 );
 
 CREATE TABLE ratings (
@@ -35,15 +46,6 @@ CREATE TABLE ratings (
     event_id INT NOT NULL,
     rating INT CHECK (rating BETWEEN 1 AND 5),
     comments TEXT[],
-
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (event_id) REFERENCES events(id)
-);
-
-CREATE TABLE rso (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    university VARCHAR(255),
-    description TEXT,
-    category VARCHAR(100)
 );
