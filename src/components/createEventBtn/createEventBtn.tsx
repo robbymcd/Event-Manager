@@ -38,7 +38,6 @@ import styles from './createEventBtn.module.css'
 
 interface FormSchema {
     name: string;
-    description: string;
     category: "public" | "private" | "rso";
     date: string;
     event_time: string;
@@ -51,7 +50,6 @@ interface FormSchema {
 
 const formSchema = z.object({
     name: z.string().min(1, { message: "Event name is required" }),
-    description: z.string().min(1, { message: "Event description is required" }),
     category: z.string().min(1, { message: "Event category is required" }),
     date: z.string().min(1, { message: "Event date is required" }),
     event_time: z.string().min(1, { message: "Event time is required" }),
@@ -70,7 +68,6 @@ export default function CreateEventBtn() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: "",
-            description: "",
             category: "",
             date: "",
             event_time: "",
@@ -124,21 +121,6 @@ export default function CreateEventBtn() {
                                 </FormItem>
                             )}
                         />
-
-                        <FormField
-                            control={form.control}
-                            name="description"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Event Description</FormLabel>
-                                    <FormControl>
-                                        <Textarea className={styles.textArea} placeholder="Enter event description" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
                         <FormField
                             control={form.control}
                             name="category"
@@ -217,7 +199,29 @@ export default function CreateEventBtn() {
                                 <FormItem>
                                     <FormLabel>Contact Phone</FormLabel>
                                     <FormControl>
-                                        <Input className={styles.input} type="tel" placeholder="Enter contact phone number" {...field} />
+                                    <Input 
+                                        className={styles.input} 
+                                        type="tel" 
+                                        placeholder="Enter contact phone number" 
+                                        value={field.value}
+                                        onChange={(e) => {
+                                            // Get only the digits
+                                            const digits = e.target.value.replace(/\D/g, '');
+
+                                            // Format the phone number
+                                            let formattedValue = '';
+                                            if (digits.length <= 3) {
+                                                formattedValue = digits;
+                                            } else if (digits.length <= 6) {
+                                                formattedValue = `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+                                            } else {
+                                                formattedValue = `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+                                            }
+
+                                            // Update the field value
+                                            field.onChange(formattedValue);
+                                        }}
+                                    />
                                     </FormControl>
                                 </FormItem>
                             )}
