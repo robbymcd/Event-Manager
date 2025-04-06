@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     query = "SELECT * FROM events WHERE category = 'public'"; // Public events visible to everyone
     
     if (universityId) {
-      query += " OR (category = 'university' AND university = $1)";
+      query += " OR (category = 'private' AND university = $1)";
       params.push(universityId);
     }
     

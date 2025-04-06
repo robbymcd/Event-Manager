@@ -1,0 +1,50 @@
+.button {
+    padding: 20px;
+}
+
+.dialogContent {
+    padding: 20px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.rsoOption {
+    margin-bottom: 10px;
+}
+
+.input {
+    padding: 10px;
+}
+
+.textArea {
+    padding: 10px;
+    max-height: 360px;
+    overflow-y: none;
+}
+
+.checkboxGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.checkbox {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.checkboxItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.submitButton {
+    padding: 10px 20px;
+}

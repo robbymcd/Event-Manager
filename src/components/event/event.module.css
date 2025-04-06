@@ -1,0 +1,39 @@
+.event { 
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.eventLink {
+    text-decoration: underline;
+    color: #00A3FF;
+    font-size: 22px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    color: white;
+    background-color: #141414;
+}
+
+.eventTime {
+    font-size: 14px;
+    font-weight: bold;    
+}
+
+.eventLocation {
+    font-size: 14px;
+    color: #9F9F9F;
+}
+
+.eventContact h2 {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.eventContact p {
+    font-size: 14px;
+}

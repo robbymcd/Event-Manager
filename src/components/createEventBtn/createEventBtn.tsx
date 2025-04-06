@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react"
+import React from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -19,14 +19,20 @@ import {
   FormLabel,
   FormMessage,
 } from "../../components/ui/form";
-import { RadioGroup } from "@radix-ui/react-radio-group"
-import { Checkbox } from "../ui/checkbox"
 import { z } from "zod";
 
-import { useForm, useWatch } from "react-hook-form"
+import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { RadioGroupItem } from "../ui/radio-group"
 import { Textarea } from "../ui/textarea"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+  } from "@/components/ui/select"
 
 import styles from './createEventBtn.module.css'
 
@@ -140,7 +146,22 @@ export default function CreateEventBtn() {
                                 <FormItem>
                                     <FormLabel>Event Category</FormLabel>
                                     <FormControl>
-                                        <Input className={styles.input} placeholder="Enter event category" {...field} />
+                                        <Select 
+                                                value={field.value}
+                                                onValueChange={field.onChange} 
+                                                defaultValue={field.value}
+                                            >
+                                                <SelectTrigger className={styles.selectTrigger}>
+                                                    <SelectValue placeholder="Select event category" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectGroup className={styles.selectGroup}>
+                                                        <SelectItem className={styles.selectItem} value="public">Public</SelectItem>
+                                                        <SelectItem className={styles.selectItem} value="private">Private</SelectItem>
+                                                        <SelectItem className={styles.selectItem} value="rso">RSO</SelectItem>
+                                                    </SelectGroup>
+                                                </SelectContent>
+                                        </Select>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

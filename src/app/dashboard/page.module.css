@@ -5,3 +5,27 @@
     display: flex;
     flex-direction: column;
 }
+
+.headerText {
+    color: white;
+    font-size: 22px;
+    font-weight: bold;
+    text-align: start;
+    margin-bottom: 20px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    padding: 50px;
+}
+
+.noEventsText {
+    margin-top: 10px;
+}
+
+.eventsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}

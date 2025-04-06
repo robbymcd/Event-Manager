@@ -40,3 +40,21 @@
 .submitButton {
     padding: 10px 20px;
 }
+
+.selectTrigger {
+    padding: 10px;
+    width: 100%;
+}
+
+.selectGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.selectItem {
+    padding: 10px;
+}
+
+.selectItemMid {
+    padding-left: 10px;
+}
