@@ -27,17 +27,24 @@ CREATE TABLE rso (
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    category VARCHAR(100),
+    category VARCHAR(255),
     description TEXT,
-    event_time TIMESTAMP NOT NULL,
+    event_time TIMESTAMP,
     location VARCHAR(255),
     contact_phone VARCHAR(20),
     contact_email VARCHAR(255),
-    participants TEXT[],
-    rso INT NOT NULL,
-    university INT NOT NULL,
-    FOREIGN KEY (rso) REFERENCES rso(id),
-    FOREIGN KEY (university) REFERENCES university(id)
+    university VARCHAR(255),
+    rso VARCHAR(255),
+    rating INTEGER,  
+    comments_count INTEGER DEFAULT 0  
+);
+
+CREATE TABLE comments (
+    id SERIAL PRIMARY KEY,
+    event_id INTEGER REFERENCES events(id) ON DELETE CASCADE,
+    user_id INTEGER REFERENCES users(id),
+    comment TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE ratings (
