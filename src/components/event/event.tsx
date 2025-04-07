@@ -4,19 +4,9 @@ import Link from 'next/link';
 import { Badge } from '../ui/badge';
 
 import styles from './event.module.css'
+import { EventType } from '@/app/interfaces/event';
 
-interface EventProps {
-    id: number;
-    name: string;
-    category: string;
-    event_time: string;
-    location: string;
-    contact_phone: string;
-    contact_email: string;
-    rso?: string;
-}
-
-export default function Event({ id, name, category, event_time, location, contact_phone, contact_email, rso }: EventProps) {
+export default function Event({ id, name, category, event_time, location, contact_phone, contact_email, rso }: EventType) {
     
     const formatEventTime = (timestamp: string) => {
         const date = new Date(timestamp);

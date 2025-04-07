@@ -7,20 +7,20 @@
 .eventLink {
     text-decoration: underline;
     color: #00A3FF;
-    font-size: 22px;
+    font-size: 32px;
 }
 
 .badge {
     display: inline-block;
     padding: 5px 10px;
     border-radius: 15px;
-    font-size: 12px;
+    font-size: 14px;
     color: white;
     background-color: #141414;
 }
 
 .eventTime {
-    font-size: 18px;
+    font-size: 22px;
     font-weight: bold;    
 }
 

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from "@/components/navbar/navbar";
 import Event from '@/components/event/event';
+import { EventType } from '../interfaces/event';
 import {
     Pagination,
     PaginationContent,
@@ -16,17 +17,6 @@ import { useUser } from "../context/userContext";
 
 import styles from './page.module.css';
 
-interface Event {
-    id: number;
-    name: string;
-    category: string;
-    event_time: string;
-    location: string;
-    contact_phone: string;
-    contact_email: string;
-    rso?: string;
-}
-
 export default function Dashboard() {
 
     const { user } = useUser();
@@ -34,7 +24,7 @@ export default function Dashboard() {
     console.log("User in Dashboard:", user);
 
     // fetch events from the server
-    const [events, setEvents] = useState<Event[]>([]);
+    const [events, setEvents] = useState<EventType[]>([]);
 
     const [currentPage, setCurrentPage] = useState(1);
     const [eventsPerPage] = useState(5);
@@ -42,7 +32,7 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const dummyEvents: Event[] = [
+                const dummyEvents: EventType[] = [
                     {
                         id: 1,
                         name: "Tech Conference 2023",
