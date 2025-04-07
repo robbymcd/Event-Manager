@@ -52,7 +52,7 @@ export default function Event({ id, name, category, event_time, location, contac
     return (
         <div className={styles.event}>
             <div className="flex flex-row gap-5 items-center">
-                <Link href={`/events/${id}`} className={styles.eventLink}>{name}</Link>
+                <Link href={`/event/${id}`} className={styles.eventLink}>{name}</Link>
                 {category === 'rso' ? (
                     <Badge variant="outline" className={styles.badge}>{rso}</Badge>
                 ) : (

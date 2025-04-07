@@ -8,7 +8,7 @@
 
 .headerText {
     color: white;
-    font-size: 22px;
+    font-size: 28px;
     font-weight: bold;
     text-align: start;
     margin-bottom: 20px;
@@ -17,7 +17,7 @@
 .content {
     display: flex;
     flex-direction: column;
-    padding: 50px;
+    padding: 50px 100px;
 }
 
 .noEventsText {
@@ -28,4 +28,15 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+}
+
+.pagination {
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+}
+  
+.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

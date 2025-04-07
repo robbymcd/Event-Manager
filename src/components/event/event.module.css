@@ -20,20 +20,20 @@
 }
 
 .eventTime {
-    font-size: 14px;
+    font-size: 18px;
     font-weight: bold;    
 }
 
 .eventLocation {
-    font-size: 14px;
+    font-size: 18px;
     color: #9F9F9F;
 }
 
 .eventContact h2 {
-    font-size: 14px;
+    font-size: 18px;
     font-weight: bold;
 }
 
 .eventContact p {
-    font-size: 14px;
+    font-size: 18px;
 }
