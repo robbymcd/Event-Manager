@@ -20,11 +20,16 @@
 }
 
 .map {
-    height: 500px;
+    height: 300px;
     width: 600px;
 }
 
 .button {
     height: 40px;
     width: 150px;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: bold;
 }

@@ -1,0 +1,72 @@
+.commentsContainer {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.commentsList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comment {
+    display: flex;
+    flex-direction: row;
+    gap: 10px
+}
+
+.commentHeader {
+    display: flex;
+    flex-direction: column;
+}
+
+.commentEmail {
+    font-weight: bold;
+}
+
+.commentDate, .commentText  {
+    color: #9F9F9F;
+}
+
+.commentInfo {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.commentActions {
+    display: flex;
+    flex-direction: row;
+    margin-left: 20px;
+    gap: 20px;
+    height: 25px;
+    margin-top: 10px;
+}
+
+.actionIcon {
+    cursor: pointer;
+}
+
+.actionIcon:hover {
+    opacity: 0.8;
+}
+
+.commentInputContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 550px;
+}
+
+.commentSubmitButton {
+    height: 40px;
+    width: 150px;
+    margin-bottom: 20px;
+}
+
+.commentInput {
+    padding: 10px;
+    max-height: 200px;
+}

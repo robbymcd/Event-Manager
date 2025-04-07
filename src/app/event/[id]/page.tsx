@@ -5,10 +5,12 @@ import { notFound } from 'next/navigation';
 import Navbar from '@/components/navbar/navbar';
 import Event from '@/components/event/event';
 import { EventType } from '@/app/interfaces/event';
+import Commments from '@/components/comments/comments';
+import Ratings from '@/components/ratings/ratings';
 
 import styles from './page.module.css';
 import { Button } from '@/components/ui/button';
-import Image from 'next/image';
+
 
 type PageParams = {
     id: string;
@@ -59,15 +61,8 @@ export default function EventPage({ params }: { params: PageParams | Promise<Pag
         });
     }
 
-    const addToCalendar = () => {
-        if (!event) return;
+    const addToGoogleCalendar = () => {
 
-        const eventDate = new Date(event.event_time);
-        const formattedDate = eventDate.toISOString().replace(/-|:|\.\d+/g, "");
-
-        const calendarUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.name)}&dates=${formattedDate}/${formattedDate}&details=${encodeURIComponent("Event at " + event.location)}&location=${encodeURIComponent(event.location)}&trp=false`;
-
-        window.open(calendarUrl, "_blank");
     }
     
     return (
@@ -88,9 +83,10 @@ export default function EventPage({ params }: { params: PageParams | Promise<Pag
                     {!event && <p className={styles.error}>Event not found.</p>}
                     <div className={styles.map} id="map"></div>
                 </div>
-                {/* Comments */}
-                {/* Rating */}
-                <Button variant="outline" className={styles.button} onSubmit={addToCalendar}>Add to calendar</Button>
+                <h1 className={styles.title}>Comments</h1>
+                <Commments eventId={event?.id} /> 
+                <h1 className={styles.title}>Rating</h1>
+                <Ratings />
             </div>
         </div>
     )
