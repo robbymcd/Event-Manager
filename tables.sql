@@ -36,6 +36,7 @@ CREATE TABLE events (
     participants TEXT[],
     rso INT,
     university INT,
+    approved BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (rso) REFERENCES rso(id),
     FOREIGN KEY (university) REFERENCES university(id)
 );
