@@ -48,7 +48,6 @@ export async function POST(req: NextRequest) {
   const {
     name,
     category,
-    description,
     event_time,
     location,
     contact_phone,
@@ -84,11 +83,10 @@ export async function POST(req: NextRequest) {
   try {
     // Insert event into the database
     const res = await pool.query(
-      "INSERT INTO events (name, category, description, event_time, location, contact_phone, contact_email, university, rso, rso_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
+      "INSERT INTO events (name, category, event_time, location, contact_phone, contact_email, university, rso, rso_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
       [
         name,
         category,
-        description,
         event_time,
         location,
         contact_phone,

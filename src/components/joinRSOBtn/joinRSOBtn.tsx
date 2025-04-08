@@ -60,6 +60,7 @@ const formSchema = z.discriminatedUnion("formType", [
 export default function JoinRSOBtn() {
   const { user } = useUser(); // Access user from context
   const [rsos, setRsos] = useState<Array<{ id: number; name: string }>>([]);
+  const [open, setOpen] = useState(false);
 
   const fetchRSOs = async () => {
     try {
@@ -133,13 +134,20 @@ export default function JoinRSOBtn() {
 
       const data = await response.json();
       console.log("Form submitted successfully:", data);
+      form.reset();
+      setOpen(false);
+      if (formType === "create") {
+        if (user) {
+          user.role = "admin";
+        }
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
     }
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className={styles.button}>
           Join/Create RSO

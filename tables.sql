@@ -28,7 +28,6 @@ CREATE TABLE events (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     category VARCHAR(100),
-    description TEXT,
     event_time TIMESTAMP NOT NULL,
     location VARCHAR(255),
     contact_phone VARCHAR(20),
