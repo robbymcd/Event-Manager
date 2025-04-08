@@ -32,93 +32,14 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const dummyEvents: EventType[] = [
-                    {
-                        id: 1,
-                        name: "Tech Conference 2023",
-                        category: "public",
-                        event_time: "2023-10-15 10:00",
-                        location: "Main Auditorium, Tech University",
-                        contact_phone: "123-456-7890",
-                        contact_email: "testing@ucf.edu",
+                const response = await fetch(`http://localhost:3000/api/events?role=${user?.role}&rso=${user?.rso}&university=${user?.university}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
                     },
-                    {
-                        id: 2,
-                        name: "Art Exhibition",
-                        category: "private",
-                        event_time: "2023-10-20 18:00",
-                        location: "Art Gallery, Downtown",
-                        contact_phone: "987-654-3210",
-                        contact_email: "testing2@ucf.edu",
-                    },
-                    {
-                        id: 3,
-                        name: "Community Cleanup",
-                        category: "rso",
-                        event_time: "2023-10-22 09:00",
-                        location: "City Park, Main Entrance",
-                        contact_phone: "555-123-4567",
-                        contact_email: "testing3@ucf.edu",
-                        rso: "Eco Warriors"
-                    },
-                    {
-                        id: 4,
-                        name: "Community Cleanup",
-                        category: "rso",
-                        event_time: "2023-10-22 09:00",
-                        location: "City Park, Main Entrance",
-                        contact_phone: "555-123-4567",
-                        contact_email: "testing3@ucf.edu",
-                        rso: "Eco Warriors"
-                    },
-                    {
-                        id: 5,
-                        name: "Tech Conference 2023",
-                        category: "public",
-                        event_time: "2023-10-15 10:00",
-                        location: "Main Auditorium, Tech University",
-                        contact_phone: "123-456-7890",
-                        contact_email: "testing@ucf.edu",
-                    },
-                    {
-                        id: 6,
-                        name: "Art Exhibition",
-                        category: "private",
-                        event_time: "2023-10-20 18:00",
-                        location: "Art Gallery, Downtown",
-                        contact_phone: "987-654-3210",
-                        contact_email: "testing2@ucf.edu",
-                    },
-                    {
-                        id: 7,
-                        name: "Community Cleanup",
-                        category: "rso",
-                        event_time: "2023-10-22 09:00",
-                        location: "City Park, Main Entrance",
-                        contact_phone: "555-123-4567",
-                        contact_email: "testing3@ucf.edu",
-                        rso: "Eco Warriors"
-                    },
-                    {
-                        id: 8,
-                        name: "Community Cleanup",
-                        category: "rso",
-                        event_time: "2023-10-22 09:00",
-                        location: "City Park, Main Entrance",
-                        contact_phone: "555-123-4567",
-                        contact_email: "testing3@ucf.edu",
-                        rso: "Eco Warriors"
-                    }
-                ]
-                setEvents(dummyEvents);
-                //const response = await fetch(`http://localhost:3000/api/events?role=${user?.role}&rso=${user?.rso}&university=${user?.university}`, {
-                //    method: 'GET',
-                //    headers: {
-                //        'Content-Type': 'application/json',
-                //    },
-                //});
-                //const data = await response.json();
-                //setEvents(data);
+                });
+                const data = await response.json();
+                setEvents(data);
             } catch (error) {
                 console.error("Failed to fetch events:", error);
             }

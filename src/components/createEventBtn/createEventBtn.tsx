@@ -93,10 +93,12 @@ export default function CreateEventBtn() {
 
         const { date, ...valuesWithoutDate } = values;
 
+        const universityId = user?.university || null;
+
         const eventData = {
             ...valuesWithoutDate,
             event_time: formattedTimestamp,  // Send the combined timestamp to the server
-            university: user?.university,
+            university: universityId,
         }
 
         try {
@@ -118,6 +120,8 @@ export default function CreateEventBtn() {
 
             const responseData = await response.json();
             console.log('Event created successfully:', responseData);
+            setOpen(false);
+            form.reset();
         } catch (error) {
             console.error('Failed to create event:', error);
         }

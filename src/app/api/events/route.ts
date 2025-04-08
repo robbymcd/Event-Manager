@@ -45,6 +45,9 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {  
 
   // Extract event details from the request body
+  const body = await req.json();
+  console.log("Received event data:", body);
+
   const {
     name,
     category,
@@ -54,7 +57,9 @@ export async function POST(req: NextRequest) {
     contact_email,
     university,
     rso
-  } = await req.json();
+  } = body;
+
+  console.log("University value:", university);
 
   const rsoParam = rso;
 
@@ -91,7 +96,7 @@ export async function POST(req: NextRequest) {
         location,
         contact_phone,
         contact_email,
-        university || null,  // Handle optional university
+        university,
         rsoIdValue || null,   // Use the found RSO ID, or null if not found
         rsoName || null       // Use the RSO name, or null if not found
       ]

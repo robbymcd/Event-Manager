@@ -34,6 +34,7 @@ CREATE TABLE events (
     contact_email VARCHAR(255),
     participants TEXT[],
     rso INT,
+    rso_name VARCHAR(255),
     university INT,
     approved BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (rso) REFERENCES rso(id),
