@@ -34,8 +34,8 @@ CREATE TABLE events (
     contact_phone VARCHAR(20),
     contact_email VARCHAR(255),
     participants TEXT[],
-    rso INT NOT NULL,
-    university INT NOT NULL,
+    rso INT,
+    university INT,
     FOREIGN KEY (rso) REFERENCES rso(id),
     FOREIGN KEY (university) REFERENCES university(id)
 );

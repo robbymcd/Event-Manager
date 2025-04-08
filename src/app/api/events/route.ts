@@ -42,7 +42,9 @@ export async function GET(req: NextRequest) {
   return NextResponse.json(rows);
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest) {  
+
+  // Extract event details from the request body
   const {
     name,
     category,
@@ -55,20 +57,51 @@ export async function POST(req: NextRequest) {
     rso
   } = await req.json();
 
-  const res = await pool.query(
-    "INSERT INTO events (name, category, description, event_time, location, contact_phone, contact_email, university, rso) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
-    [
-      name,
-      category,
-      description,
-      event_time,
-      location,
-      contact_phone,
-      contact_email,
-      university,
-      rso
-    ]
-  );
+  const rsoParam = rso;
 
-  return NextResponse.json(res.rows[0]);
+  let rsoIdValue = null;
+  let rsoName = null;
+
+  if (rsoParam && rsoParam !== 'null') {
+
+    const rsoQuery = "SELECT id, name FROM rso WHERE name = $1";
+    const rsoRes = await pool.query(rsoQuery, [rsoParam]);
+
+    if (rsoRes.rows.length > 0) {
+      rsoIdValue = rsoRes.rows[0]?.id;
+      rsoName = rsoRes.rows[0]?.name;
+    }
+  }
+
+  if (!name || !category || !event_time || !location) {
+    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+  }
+
+  if(category === 'rso' && !rsoIdValue) {
+    return NextResponse.json({ error: 'RSO not found' }, { status: 400 });
+  }
+
+  try {
+    // Insert event into the database
+    const res = await pool.query(
+      "INSERT INTO events (name, category, description, event_time, location, contact_phone, contact_email, university, rso, rso_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
+      [
+        name,
+        category,
+        description,
+        event_time,
+        location,
+        contact_phone,
+        contact_email,
+        university || null,  // Handle optional university
+        rsoIdValue || null,   // Use the found RSO ID, or null if not found
+        rsoName || null       // Use the RSO name, or null if not found
+      ]
+    );
+
+    return NextResponse.json(res.rows[0]);
+  } catch (error) {
+    console.error('Error inserting event:', error);
+    return NextResponse.json({ error: 'Failed to create event' }, { status: 500 });
+  }
 }
