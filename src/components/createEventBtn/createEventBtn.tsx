@@ -45,7 +45,6 @@ interface FormSchema {
     contact_phone: string;
     contact_email: string;
     rso: string;
-    university: string;
 }
 
 const formSchema = z.object({
@@ -56,8 +55,7 @@ const formSchema = z.object({
     location: z.string().min(1, { message: "Event location is required" }),
     contact_phone: z.string().optional(),
     contact_email: z.string().email({ message: "Invalid email address" }).optional(),
-    rso: z.string().min(1, { message: "RSO is required" }),
-    university: z.string().min(1, { message: "University is required" }),
+    rso: z.string().optional(),
 });
 
 
@@ -75,7 +73,6 @@ export default function CreateEventBtn() {
             contact_phone: "",
             contact_email: "",
             rso: "",
-            university: ""
         }
     });
 
@@ -149,7 +146,21 @@ export default function CreateEventBtn() {
                                 </FormItem>
                             )}
                         />
-
+                        {form.watch("category") === "rso" && (
+                            <FormField
+                                control={form.control}
+                                name="rso"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>RSO</FormLabel>
+                                        <FormControl>
+                                            <Input className={styles.input} placeholder="Enter RSO name" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
                         <FormField
                             control={form.control}
                             name="date"
