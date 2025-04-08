@@ -49,7 +49,7 @@ export default function ApproveEventsBtn() {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const response = await fetch("/api/events");
+      const response = await fetch("/api/events/approve");
       const data = await response.json();
       setEvents(data);
     };
@@ -67,8 +67,8 @@ export default function ApproveEventsBtn() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await fetch("/api/events/approve", { // Updated path here
-        method: "PATCH", 
+      const response = await fetch("/api/events/approve", {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -78,15 +78,13 @@ export default function ApproveEventsBtn() {
       });
   
       if (response.ok) {
-        // Update the state to reflect the approved events
-        setEvents((prevEvents) =>
-          prevEvents.map((event) =>
-            values.eventIds.includes(event.id)
-              ? { ...event, approved: true }
-              : event
-          )
-        );
         console.log("Events approved successfully");
+  
+        const updated = await fetch("/api/events/approve");
+        const updatedEvents = await updated.json();
+        setEvents(updatedEvents);
+  
+        form.reset({ eventIds: [] });
       } else {
         console.error("Failed to approve events");
       }

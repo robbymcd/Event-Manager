@@ -1,6 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 
+// GET: Fetch all events where approved = false
+export async function GET() {
+  try {
+    const { rows } = await pool.query("SELECT * FROM events WHERE approved = FALSE");
+
+    return NextResponse.json(rows);
+  } catch (error) {
+    console.error("Error fetching unapproved events:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch unapproved events" },
+      { status: 500 }
+    );
+  }
+}
+
+// PATCH: Approve selected events
 export async function PATCH(req: NextRequest) {
   const { eventIds } = await req.json();
 
