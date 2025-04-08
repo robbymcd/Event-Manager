@@ -67,7 +67,7 @@ export default function ApproveEventsBtn() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const response = await fetch("/api/events/approve/approve", {
+      const response = await fetch("/api/events/approve", { // Updated path here
         method: "PATCH", 
         headers: {
           "Content-Type": "application/json",
@@ -76,7 +76,7 @@ export default function ApproveEventsBtn() {
           eventIds: values.eventIds,
         }),
       });
-
+  
       if (response.ok) {
         // Update the state to reflect the approved events
         setEvents((prevEvents) =>
@@ -94,6 +94,7 @@ export default function ApproveEventsBtn() {
       console.error("Error submitting form:", error);
     }
   }
+  
 
   const filteredEvents = events.filter(
     (event) => isSuperAdmin || event.approved
