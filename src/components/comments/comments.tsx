@@ -30,7 +30,7 @@ export default function Comments({ eventId }: CommentsProps) {
   const [editCommentText, setEditCommentText] = useState('');
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
 
-  // Fetch comments for the specific event
+  // Fetch comments when the component is mounted or when eventId changes
   useEffect(() => {
     const fetchComments = async () => {
       if (!eventId) return;
@@ -45,17 +45,17 @@ export default function Comments({ eventId }: CommentsProps) {
     fetchComments();
   }, [eventId]);
 
+  // Add a new comment
   const addComment = async () => {
-    if (!eventId || !user) return;
     try {
-      const response = await fetch('/api/comments', {
+      const response = await fetch('/api/rating', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          comment_id: Date.now(), // optional, use UUID or remove this if not needed
-          user_id: user.id,
+          comment_id: Date.now(), // optional: use UUID if needed
+          user_id: user?.id,
           event_id: eventId,
-          rating: 0, // you can update this as needed
+          rating: 0, // default rating or update as required
           comment: addCommentText,
         }),
       });
@@ -67,6 +67,7 @@ export default function Comments({ eventId }: CommentsProps) {
     }
   };
 
+  // Start editing a comment
   const startEditComment = (commentId: number, prevCommentText: string) => {
     setCommentState('Edit');
     setEditCommentText(prevCommentText);
@@ -74,8 +75,8 @@ export default function Comments({ eventId }: CommentsProps) {
     setEditingCommentId(commentId);
   };
 
+  // Edit an existing comment
   const editComment = async (commentId: number) => {
-    // Implement this endpoint in your API
     try {
       const response = await fetch(`/api/comments/${commentId}`, {
         method: 'PUT',
@@ -96,8 +97,8 @@ export default function Comments({ eventId }: CommentsProps) {
     }
   };
 
+  // Delete a comment
   const deleteComment = async (commentId: number) => {
-    // Implement this endpoint in your API
     try {
       await fetch(`/api/comments/${commentId}`, { method: 'DELETE' });
       setComments(comments.filter((comment) => comment.id !== commentId));
@@ -155,17 +156,20 @@ export default function Comments({ eventId }: CommentsProps) {
           placeholder="Leave a comment..."
         />
         <Button
-          onClick={() => {
-            if (commentState === 'Add') {
-              addComment();
-            } else if (editingCommentId !== null) {
-              editComment(editingCommentId);
-            }
-          }}
-          variant="outline"
-          className={styles.commentSubmitButton}
-        >
-          {commentState} Comment
+            onClick={() => {
+                console.log("Button clicked"); // Add logging here to check if it's firing
+                if (commentState === 'Add') {
+                    console.log("Adding comment"); // Log when adding a comment
+                    addComment(); // Should call addComment if in 'Add' state
+                } else if (editingCommentId !== null) {
+                    console.log("Editing comment"); // Log when editing a comment
+                    editComment(editingCommentId); // Should call editComment if editing
+                }
+            }}
+            variant="outline"
+            className={styles.commentSubmitButton}
+            >
+            {commentState} Comment
         </Button>
       </div>
     </div>
