@@ -177,11 +177,10 @@ export default function JoinRSOBtn() {
           break;
       }
   
-      const method = formType === "create" ? "POST" : "PATCH";
 
       // Send user ID and university ID with the payload
       const response = await fetch(endpoint, {
-        method: method,
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
