@@ -73,6 +73,12 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  const checkQuery = "SELECT * FROM events WHERE event_time = $1 AND location = $2";
+  const checkRes = await pool.query(checkQuery, [event_time, location]);
+  if (checkRes.rows.length > 0) {
+    return NextResponse.json({ error: 'Event already exists at this time and location' }, { status: 400 });
+  }
+
   if (!name || !category || !event_time || !location) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
   }
