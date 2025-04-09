@@ -26,21 +26,11 @@ export default function EventPage({ params }: { params: PageParams | Promise<Pag
     useEffect(() => {
         const fetchEvent = async () => {
             try {
-                //const response = await fetch(`/api/events/${id}`);
-                //if (!response.ok) {
-                //    throw new Error('Event not found');
-                //}
-                //const data: EventType = await response.json();
-                const data : EventType = {
-                    id: 1,
-                    name: "Sample Event",
-                    category: "rso",
-                    event_time: "2023-10-15T10:00:00Z",
-                    location: "Main Auditorium, Tech University",
-                    contact_phone: "(123) 456-7890",
-                    contact_email: "testadmin@ucf.edu",
-                    rso: "Tech Club"
+                const response = await fetch(`/api/events/${id}`);
+                if (!response.ok) {
+                    throw new Error('Event not found');
                 }
+                const data: EventType = await response.json();
                 setEvent(data);
 
             } catch (error) {

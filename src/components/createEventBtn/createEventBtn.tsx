@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,6 +32,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import styles from "./createEventBtn.module.css";
+import { fromTheme } from "tailwind-merge";
+import { useUser } from "@/app/context/userContext";
 
 interface FormSchema {
   name: string;
@@ -56,6 +58,11 @@ const formSchema = z.object({
 });
 
 export default function CreateEventBtn() {
+
+  const { user } = useUser();
+
+  const [open, setOpen] = React.useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -84,9 +91,14 @@ export default function CreateEventBtn() {
         // Convert to ISO string (can be used for PostgreSQL)
         const formattedTimestamp = eventDateTime.toISOString();
 
+        const { date, ...valuesWithoutDate } = values;
+
+        const universityId = user?.university || null;
+
         const eventData = {
-            ...values,
+            ...valuesWithoutDate,
             event_time: formattedTimestamp,  // Send the combined timestamp to the server
+            university: universityId,
         }
 
         try {
@@ -102,11 +114,14 @@ export default function CreateEventBtn() {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to create event');
+              const errorText = await response.text();
+              console.error(`Failed with status ${response.status}:`, errorText);
             }
 
             const responseData = await response.json();
             console.log('Event created successfully:', responseData);
+            setOpen(false);
+            form.reset();
         } catch (error) {
             console.error('Failed to create event:', error);
         }
@@ -114,7 +129,7 @@ export default function CreateEventBtn() {
 
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className={styles.button}>
           Create Event

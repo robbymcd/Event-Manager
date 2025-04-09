@@ -45,17 +45,21 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {  
 
   // Extract event details from the request body
+  const body = await req.json();
+  console.log("Received event data:", body);
+
   const {
     name,
     category,
-    description,
     event_time,
     location,
     contact_phone,
     contact_email,
     university,
     rso
-  } = await req.json();
+  } = body;
+
+  console.log("University value:", university);
 
   const rsoParam = rso;
 
@@ -90,16 +94,15 @@ export async function POST(req: NextRequest) {
   try {
     // Insert event into the database
     const res = await pool.query(
-      "INSERT INTO events (name, category, description, event_time, location, contact_phone, contact_email, university, rso, rso_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
+      "INSERT INTO events (name, category, event_time, location, contact_phone, contact_email, university, rso, rso_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
       [
         name,
         category,
-        description,
         event_time,
         location,
         contact_phone,
         contact_email,
-        university || null,  // Handle optional university
+        university,
         rsoIdValue || null,   // Use the found RSO ID, or null if not found
         rsoName || null       // Use the RSO name, or null if not found
       ]

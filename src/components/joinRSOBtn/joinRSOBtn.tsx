@@ -49,6 +49,15 @@ const formSchema = z.discriminatedUnion("formType", [
     }),
   }),
   z.object({
+    formType: z.literal("leave"),
+    rsoName: z.string().optional(),
+    rsoDesc: z.string().optional(),
+    rsoCat: z.string().optional(),
+    rsos: z.array(z.number()).min(1, {
+      message: "At least one RSO must be selected to leave",
+    }),
+  }),
+  z.object({
     formType: z.literal("create"),
     rsoName: z.string().min(1, { message: "RSO name is required" }),
     rsoDesc: z.string().min(1, { message: "RSO description is required" }),
@@ -60,6 +69,8 @@ const formSchema = z.discriminatedUnion("formType", [
 export default function JoinRSOBtn() {
   const { user } = useUser(); // Access user from context
   const [rsos, setRsos] = useState<Array<{ id: number; name: string }>>([]);
+  const [myRsos, setMyRsos] = useState<Array<{ id: number; name: string }>>([]);
+  const [open, setOpen] = useState(false);
 
   const fetchRSOs = async () => {
     try {
@@ -86,8 +97,52 @@ export default function JoinRSOBtn() {
     }
   };
 
+  const fetchMyRSOs = async () => {
+    try {
+      if (!user) return;
+      const response = await fetch(`http://localhost:3000/api/rsos/my-rsos?id=${user.id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      
+      const data = await response.json();
+      setMyRsos(
+        data.map((rso: { id: number; name: string }) => ({
+          id: rso.id,
+          name: rso.name || `RSO ${rso.id}`,
+        }))
+      );
+    } catch (error) {
+      console.error("Failed to fetch users RSOs:", error);
+    }
+  };
+
+  const leaveRSOs = async () => {
+    const leavingRSOs = form.getValues("rsos");
+    try {
+      const response = await fetch(`http://localhost:3000/api/rsos/leave?id=${user?.id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to leave RSOs");
+      }
+
+      const data = await response.json();
+      console.log("Left RSOs successfully:", data);
+    } catch (error) {
+      console.error("Failed to leave RSOs:", error);
+    }
+  }
+
   useEffect(() => {
     fetchRSOs();
+    fetchMyRSOs();
   }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -109,10 +164,19 @@ export default function JoinRSOBtn() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-      const endpoint =
-        formType === "create"
-          ? "http://localhost:3000/api/rsos/create"
-          : "http://localhost:3000/api/rsos/join";
+      let endpoint = "";
+      switch (formType) {
+        case "create":
+          endpoint = "http://localhost:3000/api/rsos/create";
+          break;
+        case "join":
+          endpoint = "http://localhost:3000/api/rsos/join";
+          break;
+        case "leave":
+          endpoint = "http://localhost:3000/api/rsos/leave";
+          break;
+      }
+  
 
       // Send user ID and university ID with the payload
       const response = await fetch(endpoint, {
@@ -124,25 +188,34 @@ export default function JoinRSOBtn() {
           ...values,
           userId: user?.id,  // Include user ID
           universityId: user?.university, // Include university ID
+          rsosIds: values.rsos
         }),
       });
-
+  
       if (!response.ok) {
         throw new Error("Submission failed");
       }
-
+  
       const data = await response.json();
       console.log("Form submitted successfully:", data);
+      form.reset();
+      setOpen(false);
+      if (formType === "create") {
+        if (user) {
+          user.role = "admin";
+        }
+        myRsos.push({ id: data.rsoId, name: data.rsoName });
+      }
     } catch (error) {
       console.error("Error submitting form:", error);
     }
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className={styles.button}>
-          Join/Create RSO
+          Manage RSOs
         </Button>
       </DialogTrigger>
       <DialogContent className={styles.dialogContent}>
@@ -175,20 +248,31 @@ export default function JoinRSOBtn() {
                       </FormControl>
                       <FormLabel>Create</FormLabel>
                     </FormItem>
+                    <FormItem className={styles.radioItem}>
+                      <FormControl>
+                        <RadioGroupItem value="leave" />
+                      </FormControl>
+                      <FormLabel>Leave</FormLabel>
+                    </FormItem>
                   </RadioGroup>
                 </FormItem>
               )}
             />
-            {formType === "join" && (
+            {(formType === "join" || formType === "leave") && (
               <FormField
                 control={form.control}
                 name="rsos"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Select RSO to Join</FormLabel>
+                    <FormLabel>Select RSO to {formType === "join" ? "Join" : "Leave"}</FormLabel>
                     <ScrollArea className={styles.scrollArea}>
-                      {rsos.length === 0 && <p>Loading RSOs...</p>}
-                      {rsos.map((rso) => (
+                      {/* Display loading if array is empty */}
+                      {(formType === "join" ? rsos : myRsos).length === 0 && (
+                        <p>Loading {formType === "join" ? "available RSOs" : "your RSOs"}...</p>
+                      )}
+
+                      {/* Map through appropriate array based on formType */}
+                      {(formType === "join" ? rsos : myRsos).map((rso) => (
                         <div key={rso.id} className={`${styles.rsoOption} mb-2`}>
                           <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                             <FormControl>
@@ -207,6 +291,14 @@ export default function JoinRSOBtn() {
                           </FormItem>
                         </div>
                       ))}
+
+                      {/* Show message when no RSOs are available */}
+                      {formType === "join" && rsos.length === 0 && (
+                        <p>No RSOs available to join</p>
+                      )}
+                      {formType === "leave" && myRsos.length === 0 && (
+                        <p>You are not a member of any RSOs</p>
+                      )}
                     </ScrollArea>
                     <FormMessage />
                   </FormItem>
@@ -274,7 +366,11 @@ export default function JoinRSOBtn() {
               className={styles.submitButton}
               disabled={!form.formState.isValid}
             >
-              {formType === "join" ? "Join RSO" : "Create RSO"}
+              {formType === "join" 
+                ? "Join RSO" 
+                : formType === "leave" 
+                  ? "Leave RSO" 
+                  : "Create RSO"}
             </Button>
           </form>
         </Form>
