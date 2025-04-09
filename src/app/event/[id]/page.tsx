@@ -24,7 +24,7 @@ export default function EventPage({ params }: { params: PageParams | Promise<Pag
     useEffect(() => {
         const fetchEvent = async () => {
             try {
-                const response = await fetch(`http://localhost:3000/api/events?id=${id}`);
+                const response = await fetch(`http://localhost:3000/api/events/${numericId}`);
                 if (!response.ok) {
                     throw new Error('Event not found');
                 }
