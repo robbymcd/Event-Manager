@@ -177,9 +177,11 @@ export default function JoinRSOBtn() {
           break;
       }
   
+      const method = formType === "create" ? "POST" : "PATCH";
+
       // Send user ID and university ID with the payload
       const response = await fetch(endpoint, {
-        method: "POST",
+        method: method,
         headers: {
           "Content-Type": "application/json",
         },
@@ -203,6 +205,7 @@ export default function JoinRSOBtn() {
         if (user) {
           user.role = "admin";
         }
+        myRsos.push({ id: data.rsoId, name: data.rsoName });
       }
     } catch (error) {
       console.error("Error submitting form:", error);

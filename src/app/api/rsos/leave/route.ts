@@ -5,7 +5,7 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const userId = body.userId;
-        const rsoId = body.rsoId.toString(); // Convert to string to match TEXT[] type in database
+        const rsoId = body.rsoIds.toString(); // Convert to string to match TEXT[] type in database
 
         console.log("Received request:", { userId, rsoId });
 
