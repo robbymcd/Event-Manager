@@ -34,6 +34,7 @@ import {
 import styles from "./createEventBtn.module.css";
 import { fromTheme } from "tailwind-merge";
 import { useUser } from "@/app/context/userContext";
+import { toast } from "sonner";
 
 interface FormSchema {
   name: string;

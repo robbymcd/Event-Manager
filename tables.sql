@@ -46,7 +46,8 @@ CREATE TABLE comments (
     user_id INT NOT NULL,
     event_id INT NOT NULL,
     rating INT CHECK (rating BETWEEN 1 AND 5),
-    comments TEXT[],
+    comment TEXT,
+    timestamp TIMESTAMP NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (event_id) REFERENCES events(id)
 );

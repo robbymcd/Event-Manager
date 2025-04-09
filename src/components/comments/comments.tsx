@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
@@ -12,9 +13,11 @@ import { Button } from '../ui/button';
 interface CommentType {
   id: number;
   user_id: number;
+  event_id: number;
   email: string;
-  date: string;
+  timestamp: string;
   comment: string;
+  rating: number;
 }
 
 interface CommentsProps {
@@ -35,9 +38,16 @@ export default function Comments({ eventId }: CommentsProps) {
     const fetchComments = async () => {
       if (!eventId) return;
       try {
-        const response = await fetch(`/api/comments?eventId=${eventId}`);
+        const response = await fetch(`/api/comments?event_id=${eventId}`);
         const data = await response.json();
-        setComments(data);
+        if (Array.isArray(data)) {
+            // Get current user's email (though this might not be needed for all comments)
+            const userResponse = await fetch(`/api/users/${user?.id}`);
+            const userData = await userResponse.json();
+            
+            // Map through comments and set them
+            setComments(data);
+        }
       } catch (error) {
         console.error('Failed to fetch comments:', error);
       }
@@ -47,20 +57,30 @@ export default function Comments({ eventId }: CommentsProps) {
 
   // Add a new comment
   const addComment = async () => {
+
+    if (!user?.id || !eventId) {
+        console.error('Missing user ID or event ID');
+        return;
+    }
+
+    const formattedDate = new Date().toISOString();
+
     try {
-      const response = await fetch('/api/rating', {
+      const response = await fetch('/api/comments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          comment_id: Date.now(), // optional: use UUID if needed
+          timestamp: formattedDate, 
           user_id: user?.id,
           event_id: eventId,
-          rating: 0, // default rating or update as required
+          rating: 2, // default rating or update as required
           comment: addCommentText,
         }),
       });
+
       const newComment = await response.json();
-      setComments([...comments, newComment]);
+      console.log('New comment added:', newComment);
+      setComments([newComment, ...comments,]);
       setAddCommentText('');
     } catch (error) {
       console.error('Failed to add comment:', error);
@@ -78,10 +98,13 @@ export default function Comments({ eventId }: CommentsProps) {
   // Edit an existing comment
   const editComment = async (commentId: number) => {
     try {
-      const response = await fetch(`/api/comments/${commentId}`, {
+      const response = await fetch(`/api/comments`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ comment: editCommentText }),
+        body: JSON.stringify({ 
+            comment_id: commentId,
+            new_comment: editCommentText,
+        }),
       });
       const updatedComment = await response.json();
       setComments(
@@ -100,7 +123,7 @@ export default function Comments({ eventId }: CommentsProps) {
   // Delete a comment
   const deleteComment = async (commentId: number) => {
     try {
-      await fetch(`/api/comments/${commentId}`, { method: 'DELETE' });
+      await fetch(`/api/comments?comment_id=${commentId}`, { method: 'DELETE' });
       setComments(comments.filter((comment) => comment.id !== commentId));
     } catch (error) {
       console.error('Failed to delete comment:', error);
@@ -116,7 +139,7 @@ export default function Comments({ eventId }: CommentsProps) {
             <div className={styles.commentHeader}>
               <div className={styles.commentInfo}>
                 <h3 className={styles.commentEmail}>{comment.email}</h3>
-                <p className={styles.commentDate}>{new Date(comment.date).toLocaleString()}</p>
+                <p className={styles.commentDate}>{new Date(comment.timestamp).toLocaleString()}</p>
               </div>
               <p className={styles.commentText}>{comment.comment}</p>
             </div>

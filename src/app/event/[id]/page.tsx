@@ -30,7 +30,6 @@ export default function EventPage({ params }: { params: PageParams | Promise<Pag
                 }
                 const data: EventType = await response.json();
                 setEvent(data);
-
             } catch (error) {
                 console.error("Failed to fetch event:", error);
                 notFound(); // This will trigger a 404 page
@@ -59,7 +58,7 @@ export default function EventPage({ params }: { params: PageParams | Promise<Pag
             <div className={styles.content}>
                 <div className={styles.row}>
                     {event && <Event 
-                                id={event.id} 
+                                id={numericId} 
                                 name={event.name} 
                                 category={event.category} 
                                 event_time={event.event_time} 

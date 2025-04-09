@@ -30,6 +30,12 @@
     color: #9F9F9F;
 }
 
+/*
+.commentText {
+    margin-left: 10px;
+}
+*/
+
 .commentInfo {
     display: flex;
     flex-direction: row;
