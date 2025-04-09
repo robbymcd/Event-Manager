@@ -53,7 +53,7 @@ export default function Comments({ eventId }: CommentsProps) {
       }
     };
     fetchComments();
-  }, [eventId]);
+  }, [eventId, user]);
 
   // Add a new comment
   const addComment = async () => {
@@ -144,23 +144,23 @@ export default function Comments({ eventId }: CommentsProps) {
               <p className={styles.commentText}>{comment.comment}</p>
             </div>
             {Number(user?.id) === comment.user_id && (
-              <div className={styles.commentActions}>
-                <Image
-                  onClick={() => startEditComment(comment.id, comment.comment)}
-                  src={editIcon}
-                  alt="Edit"
-                  width={25}
-                  height={25}
-                  className={styles.actionIcon}
-                />
-                <Image
-                  onClick={() => deleteComment(comment.id)}
-                  src={deleteIcon}
-                  alt="Delete"
-                  width={25}
-                  height={25}
-                  className={styles.actionIcon}
-                />
+                <div className={styles.commentActions}>
+                    <Image
+                      onClick={() => startEditComment(comment.id, comment.comment)}
+                      src={editIcon}
+                      alt="Edit"
+                      width={25}
+                      height={25}
+                      className={styles.actionIcon}
+                    />
+                    <Image
+                      onClick={() => deleteComment(comment.id)}
+                      src={deleteIcon}
+                      alt="Delete"
+                      width={25}
+                      height={25}
+                      className={styles.actionIcon}
+                    />
               </div>
             )}
           </div>

@@ -14,26 +14,27 @@ export async function GET(req: NextRequest) {
   let params: any[] = [];
 
   if (role === 'super-admin') {
-    // Super admins can see all events
-    query = "SELECT * FROM events";
-    params = [];
+    // Super admins can see all approved events
+    query = "SELECT * FROM events WHERE approved = true";
   } else if (role === 'admin') {
-    // Regular admins can see all public events and all events for their university
-    query = "SELECT * FROM events WHERE category = 'public' OR university = $1";
+    // Admins can see all approved public events and approved events at their university
+    query = "SELECT * FROM events WHERE approved = true AND (category = 'public' OR university = $1)";
     params = [universityId];
   } else {
-    // else students 
-    query = "SELECT * FROM events WHERE category = 'public'"; // Public events visible to everyone
+    // Students see approved public events + private (if at same university) + RSO (if member)
+    query = "SELECT * FROM events WHERE approved = true AND (category = 'public'";
     
     if (universityId) {
       query += " OR (category = 'private' AND university = $1)";
       params.push(universityId);
     }
-    
+
     if (rsoId) {
       query += ` OR (category = 'rso' AND rso = $${params.length + 1})`;
       params.push(rsoId);
     }
+
+    query += ")";
   }
 
   query += " ORDER BY event_time ASC";
@@ -41,6 +42,7 @@ export async function GET(req: NextRequest) {
   const { rows } = await pool.query(query, params);
   return NextResponse.json(rows);
 }
+
 
 export async function POST(req: NextRequest) {  
 
