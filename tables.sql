@@ -41,7 +41,7 @@ CREATE TABLE events (
     FOREIGN KEY (university) REFERENCES university(id)
 );
 
-CREATE TABLE ratings (
+CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     event_id INT NOT NULL,
