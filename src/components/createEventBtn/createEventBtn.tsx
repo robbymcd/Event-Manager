@@ -116,6 +116,7 @@ export default function CreateEventBtn() {
             if (!response.ok) {
               const errorText = await response.text();
               console.error(`Failed with status ${response.status}:`, errorText);
+              toast.error("Room already being used at this time");
             }
 
             const responseData = await response.json();

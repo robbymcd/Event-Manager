@@ -15,7 +15,6 @@ export async function PUT(
   const {
     name,
     category,
-    description,
     event_time,
     location,
     contact_phone,
@@ -23,11 +22,10 @@ export async function PUT(
   } = await req.json();
 
   const res = await pool.query(
-    "UPDATE events SET name = $1, category = $2, description = $3, event_time = $4, location = $5, contact_phone = $6, contact_email = $7 WHERE id = $8 RETURNING *",
+    "UPDATE events SET name = $1, category = $2, event_time = $3, location = $4, contact_phone = $5, contact_email = $6 WHERE id = $7 RETURNING *",
     [
       name,
       category,
-      description,
       event_time,
       location,
       contact_phone,
