@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 
-export async function GET({ params }: { params: { id: string } }) {
-  const { rows } = await pool.query("SELECT * FROM events WHERE id = $1", [
-    params.id,
-  ]);
+
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  const { rows } = await pool.query("SELECT * FROM events WHERE id = $1", [params.id]);
+  
+  if (rows.length === 0) {
+    return NextResponse.json({ error: "Event not found"}, 
+      { status: 404 });
+  }
+  
   return NextResponse.json(rows[0]);
 }
 

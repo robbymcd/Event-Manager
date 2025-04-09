@@ -9,8 +9,6 @@ import Commments from '@/components/comments/comments';
 import Ratings from '@/components/ratings/ratings';
 
 import styles from './page.module.css';
-import { Button } from '@/components/ui/button';
-
 
 type PageParams = {
     id: string;
@@ -26,7 +24,7 @@ export default function EventPage({ params }: { params: PageParams | Promise<Pag
     useEffect(() => {
         const fetchEvent = async () => {
             try {
-                const response = await fetch(`/api/events/${id}`);
+                const response = await fetch(`http://localhost:3000/api/events/${numericId}`);
                 if (!response.ok) {
                     throw new Error('Event not found');
                 }
