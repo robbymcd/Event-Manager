@@ -96,6 +96,18 @@ export default function CreateEventBtn() {
 
         const universityId = user?.university || null;
 
+        const userRSO = user?.rso || null;
+
+        if (values.category === "rso" && (!values.rso || !userRSO || !userRSO.includes(values.rso))) {
+          toast.error("Invalid RSO selected or you are not authorized to create an event for this RSO");
+          //and make form outline red
+          form.setError("rso", {
+            type: "manual",
+            message: "Invalid RSO selected or you are not authorized to create an event for this RSO",
+          });
+          return;
+        }
+
         const eventData = {
             ...valuesWithoutDate,
             event_time: formattedTimestamp,  // Send the combined timestamp to the server
@@ -105,7 +117,6 @@ export default function CreateEventBtn() {
         try {
             console.log("Submitting event data:", eventData);
 
-            // Send eventData to the API
             const response = await fetch('/api/events', {
                 method: 'POST',
                 headers: {
